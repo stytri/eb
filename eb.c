@@ -111,6 +111,7 @@ static struct optget options[] = {
 	{  9, "-o, --output FILE",       "output to FILE" },
 	{ 10, "-b, --begin TEXT",        "TEXT indicates begining of block" },
 	{ 11, "-e, --end TEXT",          "TEXT indicates end of block" },
+	{ 12, "-l, --lines",             "output C style line directives" },
 };
 static size_t const n_options = (sizeof(options) / sizeof(options[0]));
 
@@ -132,6 +133,7 @@ main(
 	char const *outfile = NULL;
 	char const *begin = "```";
 	char const *end = begin;
+	int         lines = 0;
 
 	int argi = 1;
 	while((argi < argc) && (*argv[argi] == '-')) {
@@ -162,6 +164,9 @@ main(
 			case 11:
 				end = argv[argi];
 				break;
+			case 12:
+				lines = 1;
+				break;
 			default:
 				errorf("invalid option: %s", args);
 				usage(argv[0], stderr);
@@ -177,6 +182,7 @@ main(
 		!(failed = !out) || qerror(outfile),
 		out != stdout ? fclose(out) : (void)0
 	) do {
+		size_t lineno = 1;
 		if(argi < argc) {
 			infile = argv[argi++];
 		}
@@ -202,6 +208,7 @@ main(
 						}
 						break;
 					}
+					lineno += (c == '\n');
 					if(elide) {
 						elide = !((sol = (c == '\n')));
 						continue;
@@ -211,6 +218,9 @@ main(
 							ct++;
 							if(!*ct) {
 								block = !block;
+								if(block && lines) {
+									fprintf(out, "#line %zu \"%s\"\n", lineno, infile);
+								}
 								cs = ct = block ? end : begin;
 								elide = true;
 								sol = false;
