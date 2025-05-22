@@ -1,6 +1,6 @@
 # eb
 
-## Version 1.1.0
+## Version 1.1.1
 
 Processes FILE(s) -- or *stdin* if no FILE given -- emitting text between begining and ending delimeter pairs; the delimeters may be indentical.
 If only a begining delimeter is specified, then the ending delimeter is set to the same.
