@@ -1,6 +1,6 @@
 # eb
 
-## Version 1.0.0
+## Version 1.1.0
 
 Processes FILE(s) -- or *stdin* if no FILE given -- emitting text between begining and ending delimeter pairs; the delimeters may be indentical.
 If only a begining delimeter is specified, then the ending delimeter is set to the same.
@@ -16,11 +16,19 @@ By default the begining and ending delimters are both set to ```
 Extract Blocks of delimeted text
 usage: eb [OPTION]... [FILE]...
 options:
-  -h, --help         display this help and exit
-      --version      display version and exit
-      --license      display license and exit
-      --readme       display readme and exit
-  -o, --output FILE  output to FILE
-  -b, --begin TEXT   TEXT indicates begining of block
-  -e, --end TEXT     TEXT indicates end of block
+  -h, --help           display this help and exit
+      --version        display version and exit
+      --license        display license and exit
+      --readme         display readme and exit
+  -o, --output FILE    output to FILE
+  -b, --begin TEXT     TEXT indicates begining of block
+  -e, --end TEXT       TEXT indicates end of block
+  -l, --lines          output C style line directives
+  -x, --extension EXT  append EXT to the file name in line directives
 ```
+
+## Building
+
+Uses [HOL](https://github.com/stytri/hol) and [defer](https://github.com/stytri/defer).
+
+Compile with [m](https://github.com/stytri/m).

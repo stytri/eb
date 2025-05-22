@@ -23,7 +23,7 @@ static void license(void) {
 	puts("SOFTWARE.");
 }
 #ifndef VERSION
-#	define VERSION  1.0.0
+#	define VERSION  1.1.0
 #endif
 //
 // Build with https://github.com/stytri/m
@@ -87,6 +87,13 @@ static void readme(char *arg0) {
 	puts("```");
 	usage(arg0, stdout);
 	puts("```");
+	puts("");
+	puts("## Building");
+	puts("");
+	puts("Uses [HOL](https://github.com/stytri/hol) and [defer](https://github.com/stytri/defer).");
+	puts("");
+	puts("Compile with [m](https://github.com/stytri/m).");
+	puts("");
 }
 
 //------------------------------------------------------------------------------
@@ -112,6 +119,7 @@ static struct optget options[] = {
 	{ 10, "-b, --begin TEXT",        "TEXT indicates begining of block" },
 	{ 11, "-e, --end TEXT",          "TEXT indicates end of block" },
 	{ 12, "-l, --lines",             "output C style line directives" },
+	{ 13, "-x, --extension EXT",     "append EXT to the file name in line directives" },
 };
 static size_t const n_options = (sizeof(options) / sizeof(options[0]));
 
@@ -134,6 +142,7 @@ main(
 	char const *begin = "```";
 	char const *end = begin;
 	int         lines = 0;
+	char const *ext = "";
 
 	int argi = 1;
 	while((argi < argc) && (*argv[argi] == '-')) {
@@ -166,6 +175,9 @@ main(
 				break;
 			case 12:
 				lines = 1;
+				break;
+			case 13:
+				ext = argv[argi];
 				break;
 			default:
 				errorf("invalid option: %s", args);
@@ -219,7 +231,7 @@ main(
 							if(!*ct) {
 								block = !block;
 								if(block && lines) {
-									fprintf(out, "#line %zu \"%s\"\n", lineno, infile);
+									fprintf(out, "#line %zu \"%s%s\"\n", lineno, infile, ext);
 								}
 								cs = ct = block ? end : begin;
 								elide = true;
