@@ -23,7 +23,7 @@ static void license(void) {
 	puts("SOFTWARE.");
 }
 #ifndef VERSION
-#	define VERSION  1.1.0
+#	define VERSION  1.1.1
 #endif
 //
 // Build with https://github.com/stytri/m
@@ -231,7 +231,7 @@ main(
 							if(!*ct) {
 								block = !block;
 								if(block && lines) {
-									fprintf(out, "#line %zu \"%s%s\"\n", lineno, infile, ext);
+									fprintf(out, "#line %zu \"%s%s\"\n", lineno+1, infile, ext);
 								}
 								cs = ct = block ? end : begin;
 								elide = true;
