@@ -23,7 +23,7 @@ static void license(void) {
 	puts("SOFTWARE.");
 }
 #ifndef VERSION
-#	define VERSION  1.1.1
+#	define VERSION  1.2.0
 #endif
 //
 // Build with https://github.com/stytri/m
@@ -118,6 +118,7 @@ static struct optget options[] = {
 	{  9, "-o, --output FILE",       "output to FILE" },
 	{ 10, "-b, --begin TEXT",        "TEXT indicates begining of block" },
 	{ 11, "-e, --end TEXT",          "TEXT indicates end of block" },
+	{ 14, "-t, --tag TEXT",          "output only matching blocks tagged with text" },
 	{ 12, "-l, --lines",             "output C style line directives" },
 	{ 13, "-x, --extension EXT",     "append EXT to the file name in line directives" },
 };
@@ -143,6 +144,7 @@ main(
 	char const *end = begin;
 	int         lines = 0;
 	char const *ext = "";
+	char const *tag = NULL;
 
 	int argi = 1;
 	while((argi < argc) && (*argv[argi] == '-')) {
@@ -179,6 +181,9 @@ main(
 			case 13:
 				ext = argv[argi];
 				break;
+			case 14:
+				tag = argv[argi];
+				break;
 			default:
 				errorf("invalid option: %s", args);
 				usage(argv[0], stderr);
@@ -204,7 +209,7 @@ main(
 		) {
 			char const *cs = begin;
 			char const *ct = begin;
-			for(bool sol = true, undo = false, elide = false, block = false;;) {
+			for(bool sol = true, undo = false, elide = false, block = false, tagged = false;;) {
 				int c;
 				if(undo) {
 					c = *cs++;
@@ -221,21 +226,58 @@ main(
 						break;
 					}
 					lineno += (c == '\n');
+					if(tagged) {
+						tagged = !(sol = (c == '\n'));
+						if(tagged) {
+							if(c != ';') {
+								if(elide) {
+									continue;
+								}
+								if(c == *ct) {
+									ct++;
+									continue;
+								}
+								elide = true;
+								continue;
+							}
+							if(!*ct) {
+								tagged = false;
+								elide = !sol;
+								goto matched;
+							}
+							ct = tag;
+							elide = false;
+							continue;
+						}
+						if(!*ct) {
+							elide = !sol;
+							goto matched;
+						}
+						cs = ct = begin;
+						elide = false;
+						continue;
+					}
 					if(elide) {
-						elide = !((sol = (c == '\n')));
+						elide = !(sol = (c == '\n'));
 						continue;
 					}
 					if(sol) {
 						if(*ct == c) {
 							ct++;
 							if(!*ct) {
+								tagged = !block && tag;
+								if(tagged) {
+									ct = tag;
+									continue;
+								}
+								elide = true;
+								sol = false;
+matched:
 								block = !block;
 								if(block && lines) {
 									fprintf(out, "#line %zu \"%s%s\"\n", lineno+1, infile, ext);
 								}
 								cs = ct = block ? end : begin;
-								elide = true;
-								sol = false;
 							}
 							continue;
 						}
