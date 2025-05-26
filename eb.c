@@ -23,7 +23,7 @@ static void license(void) {
 	puts("SOFTWARE.");
 }
 #ifndef VERSION
-#	define VERSION  1.2.0
+#	define VERSION  1.2.1
 #endif
 //
 // Build with https://github.com/stytri/m
@@ -77,7 +77,8 @@ static void readme(char *arg0) {
 	puts("Processes FILE(s) -- or *stdin* if no FILE given -- emitting text between begining and ending delimeter pairs; the delimeters may be indentical.");
 	puts("If only a begining delimeter is specified, then the ending delimeter is set to the same.");
 	puts("The delimeters *must* be the initial characters of a line; any whitespace causes the delimeter to be ignored.");
-	puts("The remainder of the delimeter line is ignored.");
+	puts("If a tag is specified, the remainder of the begining delimeter line is parsed as a list of semi-colon delimeted tags, and the block is ouput only if one of theses tags is matched; otherwise the remainder of the line is ignored.");
+	puts("The remainder of the ending delimeter line is ignored.");
 	puts("Delimeters can not be nested.");
 	puts("");
 	puts("By default the begining and ending delimters are both set to ```");
@@ -118,7 +119,7 @@ static struct optget options[] = {
 	{  9, "-o, --output FILE",       "output to FILE" },
 	{ 10, "-b, --begin TEXT",        "TEXT indicates begining of block" },
 	{ 11, "-e, --end TEXT",          "TEXT indicates end of block" },
-	{ 14, "-t, --tag TEXT",          "output only matching blocks tagged with text" },
+	{ 14, "-t, --tag TEXT",          "output only matching blocks tagged with TEXT" },
 	{ 12, "-l, --lines",             "output C style line directives" },
 	{ 13, "-x, --extension EXT",     "append EXT to the file name in line directives" },
 };
