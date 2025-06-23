@@ -23,7 +23,7 @@ static void license(void) {
 	puts("SOFTWARE.");
 }
 #ifndef VERSION
-#	define VERSION  1.2.1
+#	define VERSION  1.2.2
 #endif
 //
 // Build with https://github.com/stytri/m
@@ -198,7 +198,7 @@ main(
 	bool failed = false;
 	DEFER(FILE *out = outfile ? fopen(outfile, "w") : stdout,
 		!(failed = !out) || qerror(outfile),
-		out != stdout ? fclose(out) : (void)0
+		(out != stdout) ? fclose(out) : 0
 	) do {
 		size_t lineno = 1;
 		if(argi < argc) {
@@ -206,7 +206,7 @@ main(
 		}
 		DEFER(FILE *in = infile ? fopen(infile, "r") : stdin,
 			!(failed = !in) || qerror(infile),
-			in != stdin ? fclose(in) : (void)0
+			(in != stdin) ? fclose(in) : 0
 		) {
 			char const *cs = begin;
 			char const *ct = begin;
